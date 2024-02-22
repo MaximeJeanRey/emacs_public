@@ -38,7 +38,7 @@
 (ivy-mode)
 (counsel-mode)
 (savehist-mode)
-
+(load-theme 'tango-dark t)
 (with-eval-after-load 'ivy
   (setq ivy-use-virtual-buffers t
         ivy-re-builders-alist '((swiper . ivy--regex-plus)
