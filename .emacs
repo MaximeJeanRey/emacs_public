@@ -23,8 +23,8 @@
 (setq-default indent-tabs-mode nil
               fill-column 78)
 
+(set-face-attribute 'default nil :height 160)
 (defalias 'yes-or-no-p 'y-or-n-p)
-
 ;; Any add to list for package-archives (to add marmalade or melpa) goes here
 (add-to-list 'package-archives 
     '("MELPA" .
@@ -47,6 +47,8 @@
         counsel-find-file-ignore-regexp "\\.go\\'"
         enable-recursive-minibuffers t
         recentf-max-saved-items nil))
+(ivy-prescient-mode 1)
+
 
 
 (setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs helm-lsp
@@ -108,4 +110,14 @@
 (define-key global-map (kbd "C-x M-w") 'wsl-copy-region-to-clipboard)
 (define-key global-map (kbd "C-x C-w") 'wsl-cut-region-to-clipboard)
 
+(use-package lsp-mode
+  :hook ((prog-mode . lsp-deferred))
+  :commands (lsp lsp-deferred)
+  :config
+  (progn
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
+                      :major-modes '(c-mode c++-mode)
+                      :remote? t
+                      :server-id 'clangd-remote))))
 
