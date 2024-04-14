@@ -26,6 +26,21 @@
 (set-face-attribute 'default nil :height 160)
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; Any add to list for package-archives (to add marmalade or melpa) goes here
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
 (add-to-list 'package-archives 
     '("MELPA" .
       "http://melpa.org/packages/"))
@@ -34,10 +49,16 @@
 (global-font-lock-mode t)
 (show-paren-mode)
 ;; (bink-cursor-mode)
+(straight-use-package 'evil)
 (evil-mode)
+(straight-use-package 'ivy)
 (ivy-mode)
+(straight-use-package 'counsel)
 (counsel-mode)
 (savehist-mode)
+(straight-use-package 'rg)
+(straight-use-package 'magit)
+
 (load-theme 'tango-dark t)
 (with-eval-after-load 'ivy
   (setq ivy-use-virtual-buffers t
@@ -47,8 +68,9 @@
         counsel-find-file-ignore-regexp "\\.go\\'"
         enable-recursive-minibuffers t
         recentf-max-saved-items nil))
+(straight-use-package 'ivy-prescient)
 (ivy-prescient-mode 1)
-
+(defvar bootstrap-version)
 
 
 (setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs helm-lsp
