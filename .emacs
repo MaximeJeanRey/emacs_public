@@ -18,46 +18,39 @@
       gc-cons-threshold 100000000
       dired-dwim-target t
       user-full-name "Maxime Rey"
-      enable-remote-dir-locals t)
+      enable-remote-dir-locals t
+      default-frame-alist '((undecorated . t)))
 
 (setq-default indent-tabs-mode nil
               fill-column 78)
-
+(setq default-frame-alist '((undecorated . t)))
 (set-face-attribute 'default nil :height 160)
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; Any add to list for package-archives (to add marmalade or melpa) goes here
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
 
 (add-to-list 'package-archives 
     '("MELPA" .
       "http://melpa.org/packages/"))
 
 (global-auto-revert-mode)
-(global-font-lock-mode t)
+(global-font-lock-mode 1)
+(add-hook 'c-mode-hook 'font-lock-mode)
 (show-paren-mode)
 ;; (bink-cursor-mode)
-(straight-use-package 'evil)
+;;(straight-use-package 'evil)
 (evil-mode)
-(straight-use-package 'ivy)
+;;(straight-use-package 'ivy)
 (ivy-mode)
-(straight-use-package 'counsel)
+;;(straight-use-package 'counsel)
 (counsel-mode)
 (savehist-mode)
-(straight-use-package 'rg)
-(straight-use-package 'magit)
+;;(straight-use-package 'rg)
+;;(straight-use-package 'magit)
+
+(package-install 'flycheck)
+
+(global-flycheck-mode)
+
 
 (load-theme 'tango-dark t)
 (with-eval-after-load 'ivy
@@ -68,9 +61,10 @@
         counsel-find-file-ignore-regexp "\\.go\\'"
         enable-recursive-minibuffers t
         recentf-max-saved-items nil))
-(straight-use-package 'ivy-prescient)
+;;(straight-use-package 'ivy-prescient)
 (ivy-prescient-mode 1)
 (defvar bootstrap-version)
+
 
 
 (setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs helm-lsp
@@ -81,11 +75,11 @@
   (mapc #'package-install package-selected-packages))
 
 ;; sample `helm' configuration use https://github.com/emacs-helm/helm/ for details
-(helm-mode)
-(require 'helm-xref)
-(define-key global-map [remap find-file] #'helm-find-files)
-(define-key global-map [remap execute-extended-command] #'helm-M-x)
-(define-key global-map [remap switch-to-buffer] #'helm-mini)
+;;(helm-mode)
+;;(require 'helm-xref)
+;;(define-key global-map [remap find-file] #'helm-find-files)
+;;(define-key global-map [remap execute-extended-command] #'helm-M-x)
+;;(define-key global-map [remap switch-to-buffer] #'helm-mini)
 
 (which-key-mode)
 (add-hook 'c-mode-hook 'lsp)
@@ -103,45 +97,45 @@
   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
   (require 'dap-cpptools)
   (yas-global-mode))
-
-(defun wsl-copy-region-to-clipboard (start end)
-  "Copy region to Windows clipboard."
-  (interactive "r")
-  (call-process-region start end "clip.exe" nil 0))
-
-(defun wsl-cut-region-to-clipboard (start end)
-    (interactive "r")
-      (call-process-region start end "clip.exe" nil 0)
-        (kill-region start end))
-
-(defun wsl-clipboard-to-string ()
-    "Return Windows clipboard as string."
-      (let ((coding-system-for-read 'dos))
-	(substring; remove added trailing \n
-		     (shell-command-to-string
-		         "powershell.exe -Command Get-Clipboard") 0 -1)))
-
-(defun wsl-paste-from-clipboard (arg)
-    "Insert Windows clipboard at point. With prefix ARG, also add to kill-ring"
-      (interactive "P")
-        (let ((clip (wsl-clipboard-to-string)))
-	  (insert clip)
-	  (if arg (kill-new clip))))
-
-(define-key global-map (kbd "C-x C-y") 'wsl-paste-from-clipboard)
-(define-key global-map (kbd "C-x M-w") 'wsl-copy-region-to-clipboard)
-(define-key global-map (kbd "C-x C-w") 'wsl-cut-region-to-clipboard)
-
-(use-package lsp-mode
-  :hook ((prog-mode . lsp-deferred))
-  :commands (lsp lsp-deferred)
-  :config
-  (progn
-    (lsp-register-client
-     (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
-                      :major-modes '(c-mode c++-mode)
-                      :remote? t
-                      :server-id 'clangd-remote))))
+(global-set-key (kbd "C-c w") 'clipboard-yank)
+(global-set-key (kbd "C-SPC") 'my-rg)
+(global-set-key (kbd "C-s")  'switch-to-buffer)
+(global-set-key (kbd "ù")  'other-window)
+(global-set-key (kbd "C-ù")  'evil-window-exchange)
 
 (menu-bar-mode -1)
-(tool-bar-mode -1) 
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
+(add-to-list 'default-frame-alist '(drag-internal-border . 1))
+(add-to-list 'default-frame-alist '(internal-border-width . 5))
+
+;;Exit insert mode by pressing j and then j quickly
+(setq key-chord-two-keys-delay 0.3)
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-mode 1)
+(electric-pair-mode t)
+(add-hook 'c-mode-common-hook
+          (lambda () (modify-syntax-entry ?_ "w")))
+(setq-default show-trailing-whitespace t)
+
+;;Bind key to add semicolon to the end of current line
+(global-set-key (kbd "C-;")
+  (lambda ()
+    (interactive)
+    ;; Keep cursor motion within this block (don't move the users cursor).
+    (save-excursion
+      ;; Typically mapped to the "End" key.
+      (call-interactively 'move-end-of-line)
+      (insert ";"))))
+(setq backup-directory-alist            '((".*" . "~/.Trash")))
+
+
+(with-eval-after-load 'rg
+  (setq rg-command-line-flags '("--hidden" "-L" "-g !*.git"))
+  (rg-define-search my-rg :files "everything"))
+
+(idle-highlight-mode 1)
+
+(provide '.emacs)
+;; .emacs ends here
+
