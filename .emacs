@@ -24,7 +24,7 @@
 (setq-default indent-tabs-mode nil
               fill-column 78)
 (setq default-frame-alist '((undecorated . t)))
-(set-face-attribute 'default nil :height 160)
+(set-face-attribute 'default nil :height 120)
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; Any add to list for package-archives (to add marmalade or melpa) goes here
 
@@ -39,7 +39,7 @@
 ;; (bink-cursor-mode)
 ;;(straight-use-package 'evil)
 (evil-mode)
-;;(straight-use-package 'ivy)
+;(straight-ge 'ivy)
 (ivy-mode)
 ;;(straight-use-package 'counsel)
 (counsel-mode)
@@ -62,6 +62,8 @@
         enable-recursive-minibuffers t
         recentf-max-saved-items nil))
 ;;(straight-use-package 'ivy-prescient)
+;;(straight-use-package 'ivy-prescient)
+;;(require 'ivy-)
 (ivy-prescient-mode 1)
 (defvar bootstrap-version)
 
@@ -102,21 +104,24 @@
 (global-set-key (kbd "C-s")  'switch-to-buffer)
 (global-set-key (kbd "ù")  'other-window)
 (global-set-key (kbd "C-ù")  'evil-window-exchange)
+(global-set-key (kbd "C-x j")  'switch-to-prev-buffer)
+
+(require 'real-auto-save)
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
 (add-to-list 'default-frame-alist '(drag-internal-border . 1))
 (add-to-list 'default-frame-alist '(internal-border-width . 5))
-
+(require 'key-chord)
 ;;Exit insert mode by pressing j and then j quickly
 (setq key-chord-two-keys-delay 0.3)
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 (key-chord-mode 1)
 (electric-pair-mode t)
 (add-hook 'c-mode-common-hook
-          (lambda () (modify-syntax-entry ?_ "w")))
-(setq-default show-trailing-whitespace t)
+          (lambda () (modify-syntax-entry ?_ "w"))
+        (setq-default show-trailing-whitespace t))
 
 ;;Bind key to add semicolon to the end of current line
 (global-set-key (kbd "C-;")
@@ -134,8 +139,8 @@
   (setq rg-command-line-flags '("--hidden" "-L" "-g !*.git"))
   (rg-define-search my-rg :files "everything"))
 
-(idle-highlight-mode 1)
+;;(idle-highlight-mode 1)
 
 (provide '.emacs)
 ;; .emacs ends here
-
+(add-to-list 'auto-mode-alist '("\\.cu\\'" . c++-mode))
