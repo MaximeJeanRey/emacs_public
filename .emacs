@@ -24,7 +24,7 @@
 (setq-default indent-tabs-mode nil
               fill-column 78)
 (setq default-frame-alist '((undecorated . t)))
-(set-face-attribute 'default nil :height 120)
+(set-face-attribute 'default nil :height 140)
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; Any add to list for package-archives (to add marmalade or melpa) goes here
 
@@ -47,7 +47,6 @@
 ;;(straight-use-package 'rg)
 ;;(straight-use-package 'magit)
 
-(package-install 'flycheck)
 
 (global-flycheck-mode)
 
@@ -75,14 +74,12 @@
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
-
 ;; sample `helm' configuration use https://github.com/emacs-helm/helm/ for details
 ;;(helm-mode)
 ;;(require 'helm-xref)
 ;;(define-key global-map [remap find-file] #'helm-find-files)
 ;;(define-key global-map [remap execute-extended-command] #'helm-M-x)
 ;;(define-key global-map [remap switch-to-buffer] #'helm-mini)
-
 (which-key-mode)
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'c++-mode-hook 'lsp)
@@ -104,10 +101,8 @@
 (global-set-key (kbd "C-s")  'switch-to-buffer)
 (global-set-key (kbd "ù")  'other-window)
 (global-set-key (kbd "C-ù")  'evil-window-exchange)
-(global-set-key (kbd "C-x j")  'switch-to-prev-buffer)
-
-(require 'real-auto-save)
-
+(global-set-key (kbd "C-x j")  'previous-buffer)
+(define-key evil-normal-state-map (kbd "=") 'evil-write)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
@@ -119,10 +114,13 @@
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 (key-chord-mode 1)
 (electric-pair-mode t)
+
 (add-hook 'c-mode-common-hook
           (lambda () (modify-syntax-entry ?_ "w"))
         (setq-default show-trailing-whitespace t))
 
+(require 'smooth-scrolling)
+(smooth-scrolling-mode 1)
 ;;Bind key to add semicolon to the end of current line
 (global-set-key (kbd "C-;")
   (lambda ()
@@ -132,15 +130,25 @@
       ;; Typically mapped to the "End" key.
       (call-interactively 'move-end-of-line)
       (insert ";"))))
-(setq backup-directory-alist            '((".*" . "~/.Trash")))
-
+(setq-default ispell-program-name "aspell")
 
 (with-eval-after-load 'rg
   (setq rg-command-line-flags '("--hidden" "-L" "-g !*.git"))
   (rg-define-search my-rg :files "everything"))
 
-;;(idle-highlight-mode 1)
+(idle-highlight-mode t)
+(setq make-backup-files nil)
+
+; Org Mode
+(add-hook 'org-mode-hook (lambda nil
+          (auto-fill-mode 1)
+          (set-fill-column 78)))
+; Add custom templates
+(define-skeleton insert-org-image
+  "A meeting skeleton" nil
+  "#+ATTR_LATEX: :width 15cm
+#+CAPTION: ")
+
 
 (provide '.emacs)
 ;; .emacs ends here
-(add-to-list 'auto-mode-alist '("\\.cu\\'" . c++-mode))
