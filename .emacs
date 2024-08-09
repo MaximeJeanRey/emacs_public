@@ -21,8 +21,8 @@
       enable-remote-dir-locals t
       default-frame-alist '((undecorated . t)))
 
-(setq-default indent-tabs-mode nil
-              fill-column 78)
+;; (setq-default indent-tabs-mode nil
+;;               fill-column 78)
 (setq default-frame-alist '((undecorated . t)))
 (set-face-attribute 'default nil :height 140)
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -39,7 +39,7 @@
 ;; (bink-cursor-mode)
 ;;(straight-use-package 'evil)
 (evil-mode)
-;(straight-ge 'ivy)
+;;(straight-use-package 'ivy)
 (ivy-mode)
 ;;(straight-use-package 'counsel)
 (counsel-mode)
@@ -61,8 +61,6 @@
         enable-recursive-minibuffers t
         recentf-max-saved-items nil))
 ;;(straight-use-package 'ivy-prescient)
-;;(straight-use-package 'ivy-prescient)
-;;(require 'ivy-)
 (ivy-prescient-mode 1)
 (defvar bootstrap-version)
 
@@ -98,26 +96,31 @@
   (yas-global-mode))
 (global-set-key (kbd "C-c w") 'clipboard-yank)
 (global-set-key (kbd "C-SPC") 'my-rg)
+(global-set-key (kbd "C-*") 'swiper)
 (global-set-key (kbd "C-s")  'switch-to-buffer)
 (global-set-key (kbd "ù")  'other-window)
 (global-set-key (kbd "C-ù")  'evil-window-exchange)
 (global-set-key (kbd "C-x j")  'previous-buffer)
+(global-set-key (kbd "C-c C-k")  'evil-scroll-up)
+(global-set-key (kbd "C-c C-j")  'evil-scroll-down)
+(global-set-key (kbd "C-<return>") 'same-window-prefix)
+
 (define-key evil-normal-state-map (kbd "=") 'evil-write)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
 (add-to-list 'default-frame-alist '(drag-internal-border . 1))
 (add-to-list 'default-frame-alist '(internal-border-width . 5))
-(require 'key-chord)
-;;Exit insert mode by pressing j and then j quickly
+
+;;Exit insert mode by pressing j and then k quickly
 (setq key-chord-two-keys-delay 0.3)
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 (key-chord-mode 1)
 (electric-pair-mode t)
 
 (add-hook 'c-mode-common-hook
-          (lambda () (modify-syntax-entry ?_ "w"))
-        (setq-default show-trailing-whitespace t))
+          (lambda () (modify-syntax-entry ?_ "w")))
+(setq-default show-trailing-whitespace t)
 
 (require 'smooth-scrolling)
 (smooth-scrolling-mode 1)
@@ -130,6 +133,7 @@
       ;; Typically mapped to the "End" key.
       (call-interactively 'move-end-of-line)
       (insert ";"))))
+
 (setq-default ispell-program-name "aspell")
 
 (with-eval-after-load 'rg
@@ -143,6 +147,7 @@
 (add-hook 'org-mode-hook (lambda nil
           (auto-fill-mode 1)
           (set-fill-column 78)))
+
 ; Add custom templates
 (define-skeleton insert-org-image
   "A meeting skeleton" nil
