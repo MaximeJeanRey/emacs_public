@@ -22,7 +22,7 @@
       default-frame-alist '((undecorated . t)))
 
 ;; (setq-default indent-tabs-mode nil
-;;               fill-column 78)
+              ;; fill-column 78)
 (setq default-frame-alist '((undecorated . t)))
 (set-face-attribute 'default nil :height 140)
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -33,7 +33,7 @@
       "http://melpa.org/packages/"))
 
 (global-auto-revert-mode)
-(global-font-lock-mode 1)
+;; (global-font-lock-mode 1)
 (add-hook 'c-mode-hook 'font-lock-mode)
 (show-paren-mode)
 ;; (bink-cursor-mode)
@@ -124,6 +124,8 @@
 
 (require 'smooth-scrolling)
 (smooth-scrolling-mode 1)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
 ;;Bind key to add semicolon to the end of current line
 (global-set-key (kbd "C-;")
   (lambda ()
@@ -153,6 +155,19 @@
   "A meeting skeleton" nil
   "#+ATTR_LATEX: :width 15cm
 #+CAPTION: ")
+
+(with-eval-after-load 'whitespace
+  (setq whitespace-line-column nil
+        whitespace-style '(face trailing lines-tail
+                                space-before-tab newline
+                                indentation empty space-after-tab)))
+;; (with-eval-after-load 'cc-vars
+;;   (setf (cdr (assoc 'other c-default-style)) "linux")
+;;   (add-hook 'c-mode-common-hook 'whitespace-mode)
+;;   (add-hook 'c-mode-common-hook 'dtrt-indent-mode)
+;;   (add-hook 'c-mode-common-hook (lambda () (setq indent-tabs-mode t)))
+;;   (add-hook 'c-mode-hook 'ggtags-mode)
+;;   (add-hook 'c++-mode-hook 'google-set-c-style))
 
 
 (provide '.emacs)
