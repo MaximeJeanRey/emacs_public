@@ -50,7 +50,6 @@
 
 (global-flycheck-mode)
 
-
 (load-theme 'tango-dark t)
 (with-eval-after-load 'ivy
   (setq ivy-use-virtual-buffers t
@@ -62,7 +61,6 @@
         recentf-max-saved-items nil))
 ;;(straight-use-package 'ivy-prescient)
 (ivy-prescient-mode 1)
-(defvar bootstrap-version)
 
 
 
@@ -72,13 +70,16 @@
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
-;; sample `helm' configuration use https://github.com/emacs-helm/helm/ for details
+;; sample helm' configuration use https://github.com/emacs-helm/helm/ for details
 ;;(helm-mode)
 ;;(require 'helm-xref)
 ;;(define-key global-map [remap find-file] #'helm-find-files)
 ;;(define-key global-map [remap execute-extended-command] #'helm-M-x)
 ;;(define-key global-map [remap switch-to-buffer] #'helm-mini)
 (which-key-mode)
+(add-hook 'c-mode-hook (lambda ()
+			 (whitespace-mode)
+			 (c-set-style "openbsd")))
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'c++-mode-hook 'lsp)
 (visual-line-mode)
@@ -95,17 +96,17 @@
   (require 'dap-cpptools)
   (yas-global-mode))
 (global-set-key (kbd "C-c w") 'clipboard-yank)
-(global-set-key (kbd "C-SPC") 'my-rg)
-(global-set-key (kbd "C-*") 'swiper)
-(global-set-key (kbd "C-s")  'switch-to-buffer)
+(global-set-key (kbd "C-c C-s") 'my-rg)
+(global-set-key (kbd "C-*") 'switch-to-buffer)
+(global-set-key (kbd "C-s")  'swiper)
 (global-set-key (kbd "ù")  'other-window)
 (global-set-key (kbd "C-ù")  'evil-window-exchange)
 (global-set-key (kbd "C-x j")  'previous-buffer)
 (global-set-key (kbd "C-c C-k")  'evil-scroll-up)
 (global-set-key (kbd "C-c C-j")  'evil-scroll-down)
-(global-set-key (kbd "C-<return>") 'same-window-prefix)
+(global-set-key (kbd "C-c C-g") 'same-window-prefix)
+(global-set-key (kbd "C-x C-j") 'previous-buffer)
 
-(define-key evil-normal-state-map (kbd "=") 'evil-write)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
@@ -118,23 +119,10 @@
 (key-chord-mode 1)
 (electric-pair-mode t)
 
-(add-hook 'c-mode-common-hook
-          (lambda () (modify-syntax-entry ?_ "w")))
 (setq-default show-trailing-whitespace t)
 
-(require 'smooth-scrolling)
-(smooth-scrolling-mode 1)
 (keyfreq-mode 1)
 (keyfreq-autosave-mode 1)
-;;Bind key to add semicolon to the end of current line
-(global-set-key (kbd "C-;")
-  (lambda ()
-    (interactive)
-    ;; Keep cursor motion within this block (don't move the users cursor).
-    (save-excursion
-      ;; Typically mapped to the "End" key.
-      (call-interactively 'move-end-of-line)
-      (insert ";"))))
 
 (setq-default ispell-program-name "aspell")
 
@@ -149,6 +137,20 @@
 (add-hook 'org-mode-hook (lambda nil
           (auto-fill-mode 1)
           (set-fill-column 78)))
+
+;; Emacs 24.5 config
+(add-to-list 'load-path "~/.emacs.d/elisp/")
+
+;; OpenBSD KNF for C/C++
+(require 'openbsd-knf-style)
+(c-add-style "OpenBSD" openbsd-knf-style)
+
+(add-hook 'c-mode-common-hook
+          (lambda () (modify-syntax-entry ?_ "w")))
+
+(with-eval-after-load 'evil
+  (evil-ex-define-cmd "x" 'evil-write))  ;; Redéfinit :x pour fonctionner comme :w
+
 
 ; Add custom templates
 (define-skeleton insert-org-image
@@ -170,5 +172,35 @@
 ;;   (add-hook 'c++-mode-hook 'google-set-c-style))
 
 
-(provide '.emacs)
-;; .emacs ends here
+(put 'magit-clean 'disabled nil)
+
+;;gnus
+(with-eval-after-load 'smtpmail
+  (setq smtpmail-stream-type 'starttls
+        smtpmail-smtp-service 587))
+(setq gnus-select-method
+      '(nnimap "imap.gmail.com")
+      gnus-parameters
+      '((".*"
+         (posting-style
+          (address "maximejeanrey@gmail.com")
+          ("X-Message-SMTP-Method" "smtp smtp.gmail.com 587")
+          (gcc nil)))))
+(setq sendmail-program "/usr/bin/msmtp")
+
+(with-eval-after-load 'sendmail
+  (setq send-mail-function 'smtpmail-send-it)
+  (setq user-mail-address "maximejeanrey@gmail.com")
+  (setq user-full-name "Maxime Rey"))
+
+(with-eval-after-load 'simple
+  (setq mail-user-agent 'gnus-user-agent))
+
+(setq smtpmail-stream-type 'starttls)
+(setq smtpmail-default-smtp-server "smtp.gmail.com")
+(setq smtpmail-smtp-server "smtp.gmail.com")
+(setq smtpmail-smtp-service 587)
+(setq smtpmail-debug-info t)
+(setq message-send-mail-function 'smtpmail-send-it )
+
+(setq message-send-mail-function 'message-send-mail-with-sendmail)
