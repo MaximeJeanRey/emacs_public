@@ -50,14 +50,15 @@
         counsel-find-file-ignore-regexp "\\.go\\'"
         enable-recursive-minibuffers t
         recentf-max-saved-items nil))
+(require 'ivy-prescient)
 (ivy-prescient-mode 1)
 
 ;; Emacs 24.5 config
 (add-to-list 'load-path "~/.emacs.d/elisp/")
 
 ;; OpenBSD KNF for C/C++
-(require 'openbsd-knf-style)
-(c-add-style "OpenBSD" openbsd-knf-style)
+;(require 'openbsd-knf-style)
+;(c-add-style "OpenBSD" openbsd-knf-style)
 
 (setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs helm-lsp
     projectile hydra flycheck company avy which-key helm-xref dap-mode))
@@ -100,7 +101,6 @@
                     :server-id 'pyls-remote)))
 
 (global-set-key (kbd "C-c w") 'clipboard-yank)
-(global-set-key (kbd "C-c s") 'my-rg)
 (global-set-key (kbd "C-*") 'switch-to-buffer)
 (global-set-key (kbd "C-s")  'swiper)
 (global-set-key (kbd "ù")  'other-window)
@@ -134,9 +134,13 @@
 
 (setq-default ispell-program-name "aspell")
 
+(require 'rg)
 (with-eval-after-load 'rg
   (setq rg-command-line-flags '("--hidden" "-L" "-g !*.git"))
   (rg-define-search my-rg :files "everything"))
+
+
+(global-set-key (kbd "C-c s") 'rg)
 
 (idle-highlight-mode t)
 (setq make-backup-files nil)
@@ -225,7 +229,7 @@
 
 ;; Assurez-vous que Gnus est chargé
 (require 'gnus)
-(require 'org-download)
+;(require 'org-download)
 
 
 ;; Configurer msmtp comme programme d'envoi
