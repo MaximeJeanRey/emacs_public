@@ -255,4 +255,35 @@ Inclure :
 Le résultat doit être directement exploitable comme proof of concept fonctionnel.
 _____________
 
+Hello,
 
+I am building a very personal website that is accessed through an NFC tag hidden in a piece of clothing.
+
+The website tells a story over one year using a tree that slowly grows over time.
+
+Before ordering the complete project, I would like to start with a single concept illustration to validate the artistic direction.
+
+Style wanted:
+
+- watercolor
+- soft
+- nostalgic
+- emotional
+- natural
+- storybook quality
+
+The final project may include:
+
+- 26 to 52 tree growth stages
+- 4 seasonal backgrounds
+- transparent PNG assets
+
+Could you tell me:
+
+- if this type of project interests you
+- what budget range you would recommend
+- whether you can maintain visual consistency across many growth stages
+
+Thank you.
+
+_____
